@@ -1,0 +1,29 @@
+# ---------- Core ----------
+python-dateutil
+pytz
+numpy
+pandas
+
+# ---------- AQI Model ----------
+requests
+prophet
+cmdstanpy
+
+# ---------- Spatial & Maps ----------
+geopy
+osmnx
+networkx
+shapely
+pyproj
+
+# ---------- Machine Learning ----------
+scikit-learn
+joblib
+
+# ---------- Visualization (optional, but prophet expects it) ----------
+matplotlib
+plotly
+
+# ---------- Backend-ready (for next step) ----------
+fastapi
+uvicorn
