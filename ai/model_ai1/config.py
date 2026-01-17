@@ -1,4 +1,4 @@
-OPENWEATHER_API_KEY = "9a6d922914010f281c604a06d489b993"
+OPENWEATHER_API_KEY = ""
 
 AQI_STATIONS = [
     {"id": "bopal", "lat": 23.0395, "lon": 72.4678},
