@@ -1,21 +1,35 @@
-def bridge_aqi_impact(progress):
-    if progress < 0.3:
-        return 0.10
-    elif progress < 0.7:
-        return 0.10 - (progress - 0.3) * 0.25
+def simulate_what_if(base_aqi, duration_months, months_ahead, construction_score, operational_score):
+    """
+    Universal What-If Engine.
+    Uses LLM-provided scores (-1.0 to 1.0) to determine impact.
+    """
+    
+    # Safety checks
+    if not duration_months:
+        duration_months = 0
+    
+    # Logic:
+    # If months_ahead <= duration: We are in CONSTRUCTION phase.
+    # If months_ahead > duration: We are in OPERATIONAL phase.
+    
+    impact = 0.0
+    
+    if months_ahead <= duration_months:
+        # Construction Phase
+        # Simple Model: Construction impact is constant during the phase
+        # (Could use a bell curve in future for peak dust)
+        impact = construction_score
+        
     else:
-        return -0.05 * (progress - 0.7) / 0.3
+        # Operational Phase
+        # Transition to operational impact
+        impact = operational_score
 
-
-def simulate_what_if(base_aqi, construction_type, duration_months, months_ahead):
-    if not duration_months or not construction_type:
-        return base_aqi
-
-    progress = min(months_ahead / duration_months, 1)
-
-    if construction_type == "bridge":
-        impact = bridge_aqi_impact(progress)
-    else:
-        impact = 0
+    # Apply impact
+    # Scores are direct percentage modifiers (0.1 = +10%, -0.05 = -5%)
+    # Add dynamic saturation for very high pollution if operational impact is positive
+    if base_aqi > 200 and impact > 0:
+         # Dampen further pollution if already saturated
+         impact *= 0.7
 
     return round(base_aqi * (1 + impact), 2)

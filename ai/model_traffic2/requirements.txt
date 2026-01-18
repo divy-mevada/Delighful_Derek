@@ -6,6 +6,7 @@ pandas
 
 # ---------- AQI Model ----------
 requests
+google-generativeai
 prophet
 cmdstanpy
 

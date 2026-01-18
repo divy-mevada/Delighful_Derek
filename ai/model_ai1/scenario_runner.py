@@ -16,9 +16,10 @@ def run_scenario(user_lat, user_lon, sentence, timeline_months, llm_client):
     # 3️⃣ Apply what-if logic
     scenario_aqi = simulate_what_if(
         base_aqi=base_aqi,
-        construction_type=scenario.get("construction_type"),
-        duration_months=scenario.get("duration_months"),
-        months_ahead=timeline_months
+        duration_months=scenario.get("duration_months", 0),
+        months_ahead=timeline_months,
+        construction_score=scenario.get("construction_impact_score", 0.0),
+        operational_score=scenario.get("operational_impact_score", 0.0)
     )
 
     return {

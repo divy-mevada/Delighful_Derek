@@ -1,4 +1,10 @@
-OPENWEATHER_API_KEY = ""
+import os
+from dotenv import load_dotenv
+
+load_dotenv()
+
+AQICN_API_KEY = os.getenv("AQICN_API_KEY")
+GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
 
 AQI_STATIONS = [
     {"id": "bopal", "lat": 23.0395, "lon": 72.4678},

@@ -5,38 +5,35 @@ def parse_what_if_scenario(llm_client, sentence):
     """
     Extracts structured parameters from a natural language What-If scenario.
     Expected fields:
-    - action: "reduce", "increase", "add_infrastructure"
+    - action: "reduce", "increase", "add_infrastructure", "new_project"
     - magnitude_percent: e.g. 20 (for 20%)
     - location: e.g. "bopal", "all"
     - duration_months: e.g. 6 (implied or stated)
+    - traffic_impact: estimated percentage change in traffic (e.g. -15 for 15% reduction)
     """
 
     system_prompt = (
         "You are an AI expert in urban traffic analytics. "
-        "Extract structured data from the user's 'What-If' scenario. "
-        "Return strictly valid JSON with keys: 'action', 'magnitude_percent' (number), 'location', 'duration_months' (number). "
-        "Default duration_months to 6 if not specified. "
-        "For 'bridge', action is 'add_infrastructure', magnitude_percent is -15 (traffic diversion)."
+        "Analyze the user's 'What-If' scenario. "
+        "Predict the impact on traffic density. "
+        "Return strictly valid JSON with keys: 'action', 'magnitude_percent' (number), 'location', 'duration_months' (number), 'traffic_impact' (number, signed percent). "
+        "Examples: "
+        "'New Metro' -> {action: 'new_project', traffic_impact: -20, duration: 48}. "
+        "'Bridge Construction' -> {action: 'new_project', traffic_impact: -10, duration: 24} (diversion). "
+        "'Festival' -> {action: 'event', traffic_impact: 30, duration: 1}. "
     )
 
-    user_prompt = f"""
-    Scenario: "{sentence}"
-    
-    Output JSON:
-    """
-
-    # If llm_client is None (for testing without API), use regex heuristic
-    if llm_client is None:
-        return _heuristic_fallback(sentence)
-
     try:
-        response = llm_client.chat(
-            system=system_prompt,
-            user=user_prompt
-        )
-        # Handle case where LLM returns markdown code block
-        clean_response = response.replace("```json", "").replace("```", "").strip()
-        return json.loads(clean_response)
+        if llm_client:
+            response = llm_client.chat(
+                system=system_prompt,
+                user=f'Scenario: "{sentence}"'
+            )
+            # Handle case where LLM returns markdown code block
+            clean_response = response.replace("```json", "").replace("```", "").strip()
+            return json.loads(clean_response)
+        else:
+             return _heuristic_fallback(sentence)
     except Exception as e:
         print(f"LLM Parse Error: {e}, falling back to heuristic.")
         return _heuristic_fallback(sentence)

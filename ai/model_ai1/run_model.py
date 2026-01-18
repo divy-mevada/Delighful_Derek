@@ -1,6 +1,16 @@
 # run_model.py
 
-from config import AQI_STATIONS, OPENWEATHER_API_KEY
+import os
+import sys
+
+# Ensure RTools/Mingw compilers are in PATH for CmdStanPy/Prophet
+rtools_path = r"C:\Users\nirmi\.cmdstan\RTools40"
+mingw64_bin = os.path.join(rtools_path, "mingw64", "bin")
+usr_bin = os.path.join(rtools_path, "usr", "bin")
+if os.path.exists(mingw64_bin):
+    os.environ["PATH"] = f"{mingw64_bin};{usr_bin};" + os.environ["PATH"]
+
+from config import AQI_STATIONS, AQICN_API_KEY
 from fetch_current_api import fetch_current_aqi
 from synthetic import generate_synthetic_history
 from train_forecast import train_prophet, predict_future
@@ -26,7 +36,7 @@ def fetch_station_data(station):
     current_aqi = fetch_current_aqi(
         station["lat"],
         station["lon"],
-        OPENWEATHER_API_KEY
+        AQICN_API_KEY
     )
 
     df = generate_synthetic_history(current_aqi)

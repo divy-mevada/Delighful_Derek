@@ -2,12 +2,16 @@
 numpy==1.26.4
 pandas==2.2.2
 requests==2.32.3
+python-dotenv==1.0.1
 
 # Time-series forecasting
-prophet==1.1.5
+prophet==1.2.1
 
 # Stan backend (required for Prophet)
 cmdstanpy==1.2.4
+
+# LLM Integration
+google-generativeai
 
 # Scientific computing
 scipy==1.13.1
@@ -15,3 +19,7 @@ scipy==1.13.1
 # Optional visualization (safe to ignore warning if missing)
 matplotlib==3.9.0
 plotly==5.22.0
+
+# API
+fastapi
+uvicorn

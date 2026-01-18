@@ -18,9 +18,9 @@ def verify_aqicn():
     aqi = fetch_current_aqi(lat, lon, AQICN_API_KEY)
     
     if aqi:
-        print(f"✅ Success! Real AQI: {aqi}")
+        print(f"[SUCCESS] Real AQI: {aqi}")
     else:
-        print("❌ Failed or Invalid Token. Please update config.py")
+        print(f"[FAILED] Failed or Invalid Token. Please update config.py")
 
 if __name__ == "__main__":
     verify_aqicn()

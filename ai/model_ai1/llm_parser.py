@@ -2,20 +2,22 @@ import json
 
 def parse_sentence(llm_client, sentence):
     system_prompt = (
-        "You are an information extraction assistant. "
-        "Extract only explicitly stated information. "
-        "Do not infer or guess missing values. "
+        "You are an environmental impact expert specialized in urban air quality (AQI). "
+        "Analyze the user's scenario and estimate its impact on air pollution. "
         "Return valid JSON only."
     )
 
     user_prompt = f"""
-    Sentence:
+    Scenario:
     "{sentence}"
 
-    Extract the following fields:
-    construction_type,
-    location,
-    duration_months
+    Extract the following fields in JSON format:
+    - construction_type: (string) simplified type (e.g., "bridge", "factory", "park")
+    - location: (string) inferred location
+    - duration_months: (int) estimated duration of construction/setup (0 if not applicable)
+    - construction_impact_score: (float, -1.0 to 1.0) Impact on AQI during construction phase. Positive means MORE pollution (e.g., dust). Negative means LESS pollution.
+    - operational_impact_score: (float, -1.0 to 1.0) Impact on AQI after completion. Positive = pollution source. Negative = clean air/greenery.
+    - reasoning: (string) Brief explanation of why you assigned these scores.
     """
 
     response = llm_client.chat(
@@ -23,4 +25,15 @@ def parse_sentence(llm_client, sentence):
         user=user_prompt
     )
 
-    return json.loads(response)
+    try:
+        return json.loads(response)
+    except json.JSONDecodeError:
+        # Fallback for empty or malformed response
+        print(f"LLM Parse Error. Response: {response}")
+        return {
+            "construction_type": "unknown",
+            "duration_months": 0,
+            "construction_impact_score": 0.0,
+            "operational_impact_score": 0.0,
+            "reasoning": "Failed to parse scenario."
+        }
